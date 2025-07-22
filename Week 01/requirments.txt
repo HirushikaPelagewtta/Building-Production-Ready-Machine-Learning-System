@@ -5,3 +5,4 @@ openai #EDA process
 groq #EDA process
 seaborn #visualization
 dotenv #environment variables
+matplotlib #visualization
