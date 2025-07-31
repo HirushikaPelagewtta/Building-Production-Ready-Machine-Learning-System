@@ -1,0 +1,14 @@
+numpy #neumerical python
+pandas #data manipulation
+scikit-learn #models and data processing
+imbalanced-learn #handling imbalanced datasets
+plotly #visualization
+joblib #model serialization
+pyyaml #YAML file handling
+python-dotenv #environment variables
+pandas-profiling #data profiling
+statsmodels #statistical modeling
+ipython #interactive computing
+seaborn #visualization
+dotenv #environment variables
+matplotlib #visualization
