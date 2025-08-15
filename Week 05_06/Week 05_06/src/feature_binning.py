@@ -10,6 +10,9 @@ class FeatureBinningStrategy(ABC):
     def bin_feature(self, df: pd.DataFrame, column: str) ->pd.DataFrame:
         pass
 
+    
+
+
 class CustomBinningStratergy(FeatureBinningStrategy):
     def __init__(self, bin_definitions):
         self.bin_definitions = bin_definitions 
@@ -36,3 +39,35 @@ class CustomBinningStratergy(FeatureBinningStrategy):
         del df[column]
 
         return df
+
+# class FeatureBinningStrategy(ABC):
+#     @abstractmethod
+#     def bin_feature(self, df: pd.DataFrame, column: str) -> pd.DataFrame:
+#         pass
+
+# class CustomBinningStrategy(FeatureBinningStrategy):
+#     def __init__(self, bin_definitions: dict):
+#         self.bin_definitions = bin_definitions
+
+#     def bin_feature(self, df, column):
+#         def assign_bin(value):
+#             if value == 850:
+#                 return "Excellent"
+            
+#             for bin_label, bin_values in self.bin_definitions.items():
+#                 if len(bin_values) == 2:
+#                     if bin_values[0] < value < bin_values[1]:
+#                         return bin_label
+#                 elif len(bin_values) == 1:  
+#                     if bin_values[0] < value:
+#                         return bin_label
+                    
+#             if value > 850:
+#                 return "Invalid"
+            
+#             return "Invalid"
+        
+#         df[f'{column}Bins'] = df[column].apply(assign_bin)
+#         del df[column]
+
+#         return df
