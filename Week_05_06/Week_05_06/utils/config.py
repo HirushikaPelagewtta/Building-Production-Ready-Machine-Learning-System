@@ -5,6 +5,8 @@ from typing import Dict, Any, List
 logging.basicConfig(level=logging.INFO, format=
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)),
     'config.yaml')
 

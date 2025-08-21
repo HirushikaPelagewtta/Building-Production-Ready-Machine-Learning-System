@@ -14,8 +14,10 @@ from data_spiltter import SimpleTrainTestSplitStratergy
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
 from config import get_data_paths, get_columns, get_missing_values_config, get_outlier_config, get_binning_config, get_encoding_config, get_scaling_config, get_splitting_config
 
+
+
 def data_pipeline(
-                    data_path: str='Week_05_06/Week_05_06/data/raw/ChurnModelling.csv', 
+                    data_path: str='data/raw/ChurnModelling.csv', 
                     target_column: str='Exited', 
                     test_size: float=0.2, 
                     force_rebuild: bool=False
@@ -28,11 +30,11 @@ def data_pipeline(
     encoding_config = get_encoding_config()
     scaling_config = get_scaling_config()
     splitting_config = get_splitting_config()
-
+    
 
     print('Step 1: Data Ingestion')
     artifacts_dir = os.path.join(os.path.dirname(__file__), '..', data_paths['data_artifacts_dir'])
-    x_train_path = os.path.join(artifacts_dir, 'X_train.csv')
+    x_train_path = os.path.join(artifacts_dir, 'X_train.csv') # this only creates a string
     x_test_path = os.path.join(artifacts_dir, 'X_test.csv')
     y_train_path = os.path.join(artifacts_dir, 'Y_train.csv')
     y_test_path = os.path.join(artifacts_dir, 'Y_test.csv')

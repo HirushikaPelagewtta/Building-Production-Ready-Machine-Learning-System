@@ -1,5 +1,5 @@
 data_paths:
-  raw_data: "Week_05_06/Week_05_06/data/raw/ChurnModelling.csv"
+  raw_data: "data/raw/ChurnModelling.csv"
   processed_data: "data/processed/ChurnModelling_Missing_Values_Handled.csv"
   artifacts_dir: "artifacts"
   data_artifacts_dir: "artifacts/data"
