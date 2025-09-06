@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from model_building import XGBoostModelBuilder, RnadomForestModelBuilder
 from model_training import ModelTrainer
-#from model_evaluation import ModelEvaluator
+from model_evaluation import ModelEvaluator
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
 from config import get_model_config, get_data_paths
 
@@ -23,7 +23,7 @@ def training_pipeline(
                         model_params: Optional[Dict[str, Any]] = None, 
                         test_size: float=0.2, 
                         random_state: int = 42,
-                        model_path: str='artifacts/models/random_forest_cv_model.joblib'
+                        model_path: str='artifacts/models/churn_analysis.joblib'
                         ):
     if (not os.path.exists(get_data_paths()['X_train'])) or \
         (not os.path.exists(get_data_paths()['Y_train'])) or \
@@ -45,11 +45,16 @@ def training_pipeline(
     model = model_builder.build_model()
     
     trainer = ModelTrainer()
-    model, training_score = trainer.train(model = model,
+    model, _ = trainer.train(model = model,
                                         X_train = X_train,
                                         Y_train = Y_train.squeeze())
     
-    print(training_score)
+    trainer.save_model(model, model_path)
+
+    evaluator = ModelEvaluator(model, 'XGBoost')
+    evaluator.evaluate(X_test, Y_test)
+    
+
 
 if __name__ == '__main__':
     model_config = get_model_config()
