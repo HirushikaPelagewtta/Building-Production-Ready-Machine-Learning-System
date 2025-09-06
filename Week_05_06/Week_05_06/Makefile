@@ -1,8 +1,13 @@
 .PHONY: all clean install train-pipeline data-pipeline streaming-inference run-all help
 
-# Default Python interpreter
-PYTHON = python
-VENV = .venv/bin/activate
+# Use PowerShell for all recipes and keep each target in a single shell session
+SHELL := pwsh
+.SHELLFLAGS := -NoProfile -Command
+.ONESHELL:
+
+# Config
+PYTHON := python
+ACTIVATE := . .\.venv\Scripts\Activate.ps1;
 
 # Default target
 all: help
@@ -21,38 +26,36 @@ help:
 install:
 	@echo "Installing project dependencies and setting up environment..."
 	@echo "Creating virtual environment..."
-	@python3 -m venv .venv
+	$(PYTHON) -m venv .venv
 	@echo "Activating virtual environment and installing dependencies..."
-	@source .venv/bin/activate && pip install --upgrade pip
-	@source .venv/bin/activate && pip install -r requirements.txt
+	$(ACTIVATE) python -m pip install --upgrade pip
+	$(ACTIVATE) pip install -r requirements.txt
 	@echo "Installation completed successfully!"
-	@echo "To activate the virtual environment, run: source .venv/bin/activate"
+	@echo "To activate the virtual environment in PowerShell, run: . .\\.venv\\Scripts\\Activate.ps1"
 
 # Clean up
 clean:
 	@echo "Cleaning up artifacts..."
-	rm -rf artifacts/models/*
-	rm -rf artifacts/evaluation/*
-	rm -rf artifacts/predictions/*
-	rm -rf data/processed/*
+	if (Test-Path "artifacts\\models") { Remove-Item "artifacts\\models\\*" -Recurse -Force -ErrorAction SilentlyContinue }
+	if (Test-Path "artifacts\\evaluation") { Remove-Item "artifacts\\evaluation\\*" -Recurse -Force -ErrorAction SilentlyContinue }
+	if (Test-Path "artifacts\\predictions") { Remove-Item "artifacts\\predictions\\*" -Recurse -Force -ErrorAction SilentlyContinue }
+	if (Test-Path "data\\processed") { Remove-Item "data\\processed\\*" -Recurse -Force -ErrorAction SilentlyContinue }
 	@echo "Cleanup completed!"
-
-
 
 # Run data pipeline
 data-pipeline:
 	@echo "Running data pipeline..."
-	@source $(VENV) && $(PYTHON) pipelines/data_pipeline.py
+	$(ACTIVATE) $(PYTHON) pipelines\\data_pipeline.py
 
 # Run training pipeline
 train-pipeline:
 	@echo "Running training pipeline..."
-	@source $(VENV) && $(PYTHON) pipelines/training_pipeline.py
+	$(ACTIVATE) $(PYTHON) pipelines\\training_pipeline.py
 
 # Run streaming inference pipeline with sample JSON
 streaming-inference:
 	@echo "Running streaming inference pipeline with sample JSON..."
-	@source $(VENV) && $(PYTHON) pipelines/streaming_inference_pipeline.py
+	$(ACTIVATE) $(PYTHON) pipelines\\streaming_inference_pipeline.py
 
 # Run all pipelines in sequence
 run-all:
@@ -60,15 +63,15 @@ run-all:
 	@echo "========================================"
 	@echo "Step 1: Running data pipeline"
 	@echo "========================================"
-	@source $(VENV) && $(PYTHON) pipelines/data_pipeline.py
-	@echo "\n========================================"
+	$(ACTIVATE) $(PYTHON) pipelines\\data_pipeline.py
+	@echo "`n========================================"
 	@echo "Step 2: Running training pipeline"
 	@echo "========================================"
-	@source $(VENV) && $(PYTHON) pipelines/training_pipeline.py
-	@echo "\n========================================"
+	$(ACTIVATE) $(PYTHON) pipelines\\training_pipeline.py
+	@echo "`n========================================"
 	@echo "Step 3: Running streaming inference pipeline"
 	@echo "========================================"
-	@source $(VENV) && $(PYTHON) pipelines/streaming_inference_pipeline.py
-	@echo "\n========================================"
+	$(ACTIVATE) $(PYTHON) pipelines\\streaming_inference_pipeline.py
+	@echo "`n========================================"
 	@echo "All pipelines completed successfully!"
 	@echo "========================================"

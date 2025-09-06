@@ -3,4 +3,67 @@ from abc import ABC, abstractmethod
 import joblib
 import os
 from datetime import datetime
+from xgboost import XGBClassifier 
 from sklearn.ensemble import RandomForestClassifier
+
+class BaseModelBuilder(ABC):
+    def __init__(self,model_Name:str,**kwargs):
+        self.model_name = model_Name
+        self.model = None
+        self.model_params = kwargs
+
+    @abstractmethod
+    def build_model(self):
+        pass
+
+    def save_model(self, filepath):
+        if self.model is None:
+            raise ValueError("No model to save. Build model first.")
+        
+        joblib.dump(self.model, filepath) # Joblib can be used to securely load and save models.
+
+    def load_model(self, filepath):
+        if os.path.exists(filepath):
+            raise ValueError("Can't load. File not found.")
+        
+        self.model = joblib.load(filepath)    
+
+class RnadomForestModelBuilder(BaseModelBuilder):
+    def __init__(self, **kwargs):
+        default_parmas = {
+            'max_depth': 10,
+            'n_estimators': 100,
+            'min_sample_split': 2,
+            'min_sample_leaf': 1,
+            'random_state': 42
+        }
+        default_parmas.update(kwargs)
+
+        super().__init__('RandomForest', **default_parmas)
+
+    def build_model(self):
+        self.model = RandomForestClassifier(self.model_params)
+        return self.model
+    
+class XGBoostModelBuilder(BaseModelBuilder):
+    def __init__(self, **kwargs):
+        default_parmas = {
+            'max_depth': 10,
+            'n_estimators': 100,
+            'random_state': 42
+        }
+        default_parmas.update(kwargs)
+
+        super().__init__('XGBoost', **default_parmas)
+
+    def build_model(self):
+        self.model = XGBClassifier(self.model_params)
+        return self.model
+    
+rf = RnadomForestModelBuilder()
+rf_model = rf.build_model()
+print(rf_model)
+
+xgb = XGBoostModelBuilder()
+xgb_model = xgb.build_model()
+print(xgb_model)
