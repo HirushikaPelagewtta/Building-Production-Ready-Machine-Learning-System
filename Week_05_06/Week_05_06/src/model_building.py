@@ -60,10 +60,3 @@ class XGBoostModelBuilder(BaseModelBuilder):
         self.model = XGBClassifier(self.model_params)
         return self.model
     
-rf = RnadomForestModelBuilder()
-rf_model = rf.build_model()
-print(rf_model)
-
-xgb = XGBoostModelBuilder()
-xgb_model = xgb.build_model()
-print(xgb_model)
