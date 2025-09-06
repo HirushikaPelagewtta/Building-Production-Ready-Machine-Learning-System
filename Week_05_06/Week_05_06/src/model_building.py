@@ -33,8 +33,8 @@ class RnadomForestModelBuilder(BaseModelBuilder):
         default_parmas = {
             'max_depth': 10,
             'n_estimators': 100,
-            'min_sample_split': 2,
-            'min_sample_leaf': 1,
+            'min_samples_split': 2,
+            'min_samples_leaf': 1,
             'random_state': 42
         }
         default_parmas.update(kwargs)
@@ -42,7 +42,7 @@ class RnadomForestModelBuilder(BaseModelBuilder):
         super().__init__('RandomForest', **default_parmas)
 
     def build_model(self):
-        self.model = RandomForestClassifier(self.model_params)
+        self.model = RandomForestClassifier(**self.model_params)
         return self.model
     
 class XGBoostModelBuilder(BaseModelBuilder):
@@ -57,6 +57,6 @@ class XGBoostModelBuilder(BaseModelBuilder):
         super().__init__('XGBoost', **default_parmas)
 
     def build_model(self):
-        self.model = XGBClassifier(self.model_params)
+        self.model = XGBClassifier(**self.model_params)
         return self.model
     
