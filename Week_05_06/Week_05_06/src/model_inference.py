@@ -50,35 +50,20 @@ class ModelInference:
         data = ordinal_strategy.encode(data)    
 
         data = data.drop(columns=['RowNumber', 'CustomerId', 'Firstname', 'Lastname'])
-        print(data)
         return data
 
     def predict(self, data):
         pp_data = self.preprocess_input(data)
         Y_pred = self.model.predict(pp_data)
-        Y_proba = self.model.predict_proba(pp_data)[:, 1]
+        Y_proba = float(self.model.predict_proba(pp_data)[:, 1])
 
-        print(Y_pred, Y_proba)
+        Y_pred = 'Churn' if Y_pred == 1 else 'Retain'
+        Y_proba = round(Y_proba*100, 2)
+
+        return {
+                "Status": Y_pred,
+                "Confidance": f"{Y_proba} %"
+                }
 
 
-data =     {
-        "RowNumber": 1,
-        "CustomerId": 15634602,
-        "Firstname": "Grace",
-        "Lastname": "Williams",
-        "CreditScore": 619,
-        "Geography": "France",
-        "Gender": "Female",
-        "Age": 42,
-        "Tenure": 2,
-        "Balance": 0,
-        "NumOfProducts": 1,
-        "HasCrCard": 1,
-        "IsActiveMember": 1,
-        "EstimatedSalary": 101348.88,
-    }
 
-Inference = ModelInference('artifacts/models/churn_analysis.joblib')
-Inference.load_encoders('artifacts/encode')
-data = Inference.predict(data)
-print(data)
