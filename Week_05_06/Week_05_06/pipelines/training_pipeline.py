@@ -12,6 +12,7 @@ from model_building import XGBoostModelBuilder, RnadomForestModelBuilder
 from model_training import ModelTrainer
 from model_evaluation import ModelEvaluator
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'utils'))
+from mlflow_utils import MLflowTracker, setup_mlflow_autolog, create_mlflow_run_tags
 from config import get_model_config, get_data_paths
 
 logging.basicConfig(level=logging.INFO, format=
@@ -35,6 +36,14 @@ def training_pipeline(
     else:
         print("Loading Data Artifacrs from Data Pipelines.")
 
+    mlflow_tracker = MLflowTracker()
+    setup_mlflow_autolog()
+    run_tags = create_mlflow_run_tags('training_pipeline',{
+                                        'model_type': 'XGBoost',
+                                        'training_strategy': 'Simple',
+                                        }
+                                      )
+    run = mlflow_tracker.start_run(run_name='training_pipeline', tags = run_tags)
     
     X_train = pd.read_csv(get_data_paths()['X_train'])
     Y_train =  pd.read_csv(get_data_paths()['Y_train'])
@@ -52,7 +61,13 @@ def training_pipeline(
     trainer.save_model(model, model_path)
 
     evaluator = ModelEvaluator(model, 'XGBoost')
-    evaluator.evaluate(X_test, Y_test)
+    evaluation_results = evaluator.evaluate(X_test, Y_test)
+    evaluation_results_cp = evaluation_results.copy()
+    del evaluation_results_cp['confusion_matrix']
+
+    model_params = get_model_config()['model_params']
+    mlflow_tracker.log_training_metrics(model,evaluation_results_cp, model_params)
+    mlflow_tracker.end_run()
     
 
 

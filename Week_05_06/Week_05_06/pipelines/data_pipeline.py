@@ -63,7 +63,7 @@ def data_pipeline(
         mlflow_tracker.log_data_pipeline_metrics({
             'total_samples': len(X_train) +len(X_test),
             'train_samples': len(X_train),
-            'test_samples': len(X_test)
+            'test_samples': len(X_test),
             'x_train_path': x_train_path,
             'x_test_path': x_test_path,
             'y_train_path': y_train_path,
@@ -144,3 +144,5 @@ def data_pipeline(
     print(f"Y train size : {Y_train.shape}")
     print(f"Y test size : {Y_test.shape}")
 
+    
+# data_pipeline()

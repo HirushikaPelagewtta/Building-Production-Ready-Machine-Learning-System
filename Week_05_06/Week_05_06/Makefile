@@ -4,6 +4,8 @@
 # No ACTIVATE needed
 PYTHON := .\.venv\Scripts\python.exe
 PIP := .\.venv\Scripts\pip.exe
+MLFLOW_PORT := 5001
+
 
 all: help
 
@@ -51,3 +53,15 @@ run-all:
 	$(PYTHON) pipelines\\training_pipeline.py
 	$(PYTHON) pipelines\\streaming_inference_pipeline.py
 	@echo "All pipelines completed successfully!"
+
+
+mlflow-ui:
+	@echo "Launching MLflow UI..."
+	@echo "MLflow UI will be available at: http://localhost:$(MLFLOW_PORT)"
+	@powershell -NoProfile -Command Start-Process "http://localhost:$(MLFLOW_PORT)"
+	$(PYTHON) -m mlflow ui --host 127.0.0.1 --port $(MLFLOW_PORT) 2>&1
+
+stop-mlflow:
+	@echo "Stopping all MLflow servers..."
+	-@for /f "tokens=5" %%P in ('netstat -ano ^| findstr LISTENING ^| findstr :$(MLFLOW_PORT)') do @echo Killing PID %%P & taskkill /PID %%P /F >nul 2>nul
+	@echo "✅ All MLflow servers have been stopped"
